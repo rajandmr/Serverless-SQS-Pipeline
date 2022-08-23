@@ -1,0 +1,14 @@
+Resources:
+  DemoQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: "DemoQueue"
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt: [DemoQueueDLQ, Arn]
+        maxReceiveCount: 2
+
+  DemoQueueDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: "DemoQueueDLQ"

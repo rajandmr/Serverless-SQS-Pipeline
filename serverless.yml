@@ -1,0 +1,48 @@
+service: sqspipeline
+frameworkVersion: '3'
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-iam-roles-per-function
+
+package:
+  patterns:
+    - "!venv/**"
+    - "!.venv/**"
+    - "!node_modules/**"
+    - "!resources/**"
+    - "!package-lock.json"
+    - "!yarn.lock"
+    - "!README.md"
+    - "!serverless.yml"
+    - "!.gitignore"
+    - "!.vscode/**"
+    - "!.serverless/**"
+    - "!requirements.txt"
+    - "!requirements.in"
+    - "!.sample.env"
+    - "!.env.**"
+    - "!.editorconfig"
+    - "!.flake8"
+    - "!makefile"
+    - "!.pytest_cache/**"
+    - "!.mypy_cache/**"
+  individually: true
+
+provider:
+  name: aws
+  runtime: python3.8
+  profile: lilbud
+  stage: ${opt:stage, 'dev'}
+  region: us-east-2
+  logRetentionInDays: 7
+  deploymentBucket:
+    name: "rajan-exp-bucket"
+  environment:
+    QUEUE_URL: { Ref: DemoQueue}
+
+functions:
+  - ${file(functions/index.yml)}
+
+resources:
+  - ${file(resources/sqs.yml)}

@@ -1,0 +1,27 @@
+SQSPublisher:
+  handler: functions/sqs_publisher.main
+  events:
+    - http:
+        path: publish
+        method: GET
+        cors: true
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - sqs:SendMessage
+      Resource:
+        Fn::GetAtt: [DemoQueue, Arn]
+
+SQSListener:
+  handler: functions/sqs_listener.main
+  events:
+    - sqs:
+        arn:
+          Fn::GetAtt: [DemoQueue, Arn]
+        batchSize: 1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - sqs:ReceiveMessage
+      Resource:
+        Fn::GetAtt: [DemoQueue, Arn]
